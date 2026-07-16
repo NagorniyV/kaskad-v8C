@@ -220,6 +220,7 @@
     .callback-main-title {
         font-size: 32px;
         margin-bottom: 24px;
+        text-align: center;
     }
 
     .callback-section-container {
@@ -245,6 +246,7 @@
         font-size: 28px;
         line-height: 1.2;
         margin-bottom: 20px;
+        text-align: center;
     }
 
     .callback-section-container {

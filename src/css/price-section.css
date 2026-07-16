@@ -129,6 +129,17 @@
     margin: 0px auto 30px auto;
 }
 
+@media (max-width: 768px) {
+    .price-content-container {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .price-content {
+        text-indent: 0;
+    }
+}
+
 .price-anchor-nav {
   margin: 0 0 1.5rem;
   padding: 1rem 0;

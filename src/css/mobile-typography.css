@@ -1,0 +1,99 @@
+/* Единая типографика заголовков на мобильных устройствах */
+
+@media (max-width: 768px) {
+    :is(
+        .benefits-title,
+        .callback-main-title,
+        .brend-title,
+        .services-title,
+        .service-gbo-title,
+        .seasonal-offers h2,
+        .main-content > h2,
+        .price-section > h2,
+        .evacuator-section h2,
+        .evacuator-price-section h2,
+        .parts-section h2,
+        .gbo-section > h2,
+        .catalog-title,
+        .kaskad-rzbk-brand-cars-title,
+        .service-TS-title,
+        .service-TS-title-black,
+        .TS-title,
+        .map-title,
+        .dvigatel-span
+    ) {
+        font-family: "Montserrat", sans-serif;
+        font-weight: 700;
+        font-size: 32px !important;
+        line-height: 1.15;
+        text-align: center;
+    }
+
+    :is(
+        .main-content > h3,
+        .evacuator-section > h3,
+        .evacuator-price-section h3,
+        .parts-section > h3,
+        .seasonal-content h3,
+        .service-card h3,
+        .razborka-brand-card h3,
+        .work-card h3,
+        .TS-seo-content h3,
+        h3.team-card-title,
+        .service-gbo-h3,
+        .gbo-section h3,
+        .evacuator-section .advantage-item h3
+    ) {
+        font-family: "Montserrat", sans-serif;
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 1.2;
+    }
+}
+
+@media (max-width: 480px) {
+    :is(
+        .benefits-title,
+        .callback-main-title,
+        .brend-title,
+        .services-title,
+        .service-gbo-title,
+        .seasonal-offers h2,
+        .main-content > h2,
+        .price-section > h2,
+        .evacuator-section h2,
+        .evacuator-price-section h2,
+        .parts-section h2,
+        .gbo-section > h2,
+        .catalog-title,
+        .kaskad-rzbk-brand-cars-title,
+        .service-TS-title,
+        .service-TS-title-black,
+        .TS-title,
+        .map-title,
+        .dvigatel-span
+    ) {
+        font-size: 28px !important;
+        line-height: 1.2;
+        text-align: center;
+    }
+
+    :is(
+        .main-content > h3,
+        .evacuator-section > h3,
+        .evacuator-price-section h3,
+        .parts-section > h3,
+        .seasonal-content h3,
+        .service-card h3,
+        .razborka-brand-card h3,
+        .work-card h3,
+        .TS-seo-content h3,
+        h3.team-card-title,
+        .service-gbo-h3,
+        .gbo-section h3,
+        .evacuator-section .advantage-item h3
+    ) {
+        font-size: 22px;
+        line-height: 1.2;
+    }
+}

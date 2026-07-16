@@ -4,11 +4,12 @@
       <svg
         width="140"
         height="80"
-        viewBox="0 0 200 120"
+        viewBox="0 40 200 120"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect width="200" height="80" rx="10" fill="none" />
+        <rect y="40" width="200" height="80" rx="10" fill="none" />
+        <g transform="translate(0, 10)">
         <path
           d="M40 70C60 50 80 80 100 60C120 40 140 70 160 50"
           stroke="#24a7c1"
@@ -27,6 +28,7 @@
         >
           АС КАСКАД
         </text>
+        </g>
       </svg>
     </a>
 
@@ -85,6 +87,9 @@
             </li>
             <li class="submenu-item">
               <a href="./remont-elektriki.html" data-translate="nav-electric">Электрика</a>
+            </li>
+            <li class="submenu-item">
+              <a href="./avtokondicionery.html" data-translate="nav-ac">Автокондиционеры</a>
             </li>
             <li class="submenu-item">
               <a href="./remont-tormoznoi-sistemy.html" data-translate="nav-brakes">Тормозная система</a>
