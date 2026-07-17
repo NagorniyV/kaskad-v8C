@@ -1,3 +1,253 @@
+// =========================
+// GA4 EVENT TRACKING (gtag)
+// =========================
+function trackGaEvent(eventName, params = {}) {
+  if (typeof window.gtag !== "function") return;
+  if (!eventName || typeof eventName !== "string") return;
+  window.gtag("event", eventName, params || {});
+}
+
+function initKaskadGaTracking() {
+  if (window.__kaskadGaTrackingInitialized) return;
+  window.__kaskadGaTrackingInitialized = true;
+
+  const PHONE_SLOT_BY_DIGITS = {
+    "380668375666": "primary",
+    "380962110210": "secondary",
+    "380502233959": "other",
+    "380681234551": "other"
+  };
+
+  function digitsOnly(value) {
+    return String(value || "").replace(/\D/g, "");
+  }
+
+  function resolvePhoneSlot(href) {
+    const digits = digitsOnly(href);
+    if (PHONE_SLOT_BY_DIGITS[digits]) return PHONE_SLOT_BY_DIGITS[digits];
+    if (digits.endsWith("0668375666") || digits.endsWith("380668375666")) {
+      return "primary";
+    }
+    if (digits.endsWith("0962110210") || digits.endsWith("380962110210")) {
+      return "secondary";
+    }
+    return "other";
+  }
+
+  function resolveElementLocation(el) {
+    const explicit = el?.getAttribute?.("data-ga-location")?.trim();
+    if (explicit) return explicit;
+
+    if (el.closest?.(".social-fixed, .callback-fixed-btn, a.social-btn")) {
+      if (el.closest?.(".social-fixed") || el.classList?.contains("social-btn")) {
+        return "floating_button";
+      }
+    }
+    if (el.closest?.("#callbackModal, .modal, .modal-content")) return "modal";
+    if (el.closest?.("#header, header.header, .header-container")) return "header";
+    if (el.closest?.("#map-section, footer, .footer-container")) {
+      if (el.closest?.(".map-embed-wrap, .title-map, .map-directions-btn")) {
+        return "map_section";
+      }
+      return "footer";
+    }
+    if (el.closest?.(".hero-contact-div, .hero-contact-number, .hero")) {
+      return "contact_section";
+    }
+    if (el.closest?.(".callback-section, .number-footer-div")) {
+      return "contact_section";
+    }
+    if (el.closest?.("main, .price-section, .evacuator-section, .parts-section, .gbo-section, .TS-section, .service-catalog-section")) {
+      return "service_section";
+    }
+    return "other";
+  }
+
+  function detectMessengerPlatform(href) {
+    const h = String(href || "").toLowerCase();
+    if (
+      h.includes("t.me/") ||
+      h.includes("telegram.me/") ||
+      h.startsWith("tg://") ||
+      h.includes("telegram.org")
+    ) {
+      return "telegram";
+    }
+    if (
+      h.startsWith("viber:") ||
+      h.includes("viber.com") ||
+      h.includes("invite.viber.com")
+    ) {
+      return "viber";
+    }
+    if (
+      h.includes("wa.me/") ||
+      h.includes("api.whatsapp.com") ||
+      h.startsWith("whatsapp:")
+    ) {
+      return "whatsapp";
+    }
+    return "";
+  }
+
+  function detectSocialPlatform(href) {
+    const h = String(href || "").toLowerCase();
+    if (h.includes("instagram.com")) return "instagram";
+    if (h.includes("facebook.com") || h.includes("fb.com") || h.includes("fb.me")) {
+      return "facebook";
+    }
+    if (h.includes("youtube.com/") || h.includes("youtu.be/")) return "youtube";
+    if (h.includes("tiktok.com")) return "tiktok";
+    return "";
+  }
+
+  function isDirectionsHref(href) {
+    const h = String(href || "").toLowerCase();
+    return (
+      h.includes("google.com/maps/dir") ||
+      h.includes("maps.google.com") && h.includes("dir") ||
+      h.includes("maps.app.goo.gl") ||
+      h.includes("goo.gl/maps") ||
+      h.startsWith("geo:")
+    );
+  }
+
+  function annotateKnownElements(root = document) {
+    root.querySelectorAll?.('a[href^="tel:"]').forEach((a) => {
+      if (!a.getAttribute("data-ga-action")) {
+        a.setAttribute("data-ga-action", "click_to_call");
+      }
+      if (!a.getAttribute("data-ga-location")) {
+        a.setAttribute("data-ga-location", resolveElementLocation(a));
+      }
+      if (!a.getAttribute("data-ga-phone-slot")) {
+        a.setAttribute("data-ga-phone-slot", resolvePhoneSlot(a.getAttribute("href")));
+      }
+    });
+
+    root.querySelectorAll?.("a[href]").forEach((a) => {
+      const href = a.getAttribute("href") || "";
+      const messenger = detectMessengerPlatform(href);
+      if (messenger) {
+        if (!a.getAttribute("data-ga-action")) {
+          a.setAttribute("data-ga-action", "messenger_click");
+        }
+        if (!a.getAttribute("data-ga-platform")) {
+          a.setAttribute("data-ga-platform", messenger);
+        }
+        if (!a.getAttribute("data-ga-location")) {
+          a.setAttribute(
+            "data-ga-location",
+            a.closest(".social-fixed") ? "floating_button" : resolveElementLocation(a)
+          );
+        }
+        return;
+      }
+
+      const social = detectSocialPlatform(href);
+      // Skip youtube embeds / same-page video players: only external profile/watch links as <a>
+      if (social) {
+        if (!a.getAttribute("data-ga-action")) {
+          a.setAttribute("data-ga-action", "social_click");
+        }
+        if (!a.getAttribute("data-ga-platform")) {
+          a.setAttribute("data-ga-platform", social);
+        }
+        if (!a.getAttribute("data-ga-location")) {
+          a.setAttribute("data-ga-location", resolveElementLocation(a));
+        }
+      }
+    });
+  }
+
+  annotateKnownElements(document);
+  document.addEventListener("partials:loaded", () => {
+    annotateKnownElements(document);
+  });
+
+  document.addEventListener(
+    "click",
+    (e) => {
+      const target = e.target instanceof Element ? e.target : null;
+      if (!target) return;
+
+      const el =
+        target.closest?.(
+          "a[href], [data-ga-action], button[data-ga-action]"
+        ) || null;
+      if (!el) return;
+
+      // Avoid tracking pure UI controls without tracking intent
+      if (el.id === "back-to-top" || el.closest?.("#back-to-top")) return;
+      if (el.classList?.contains("menu-toggle") || el.classList?.contains("burger-menu")) {
+        return;
+      }
+      if (el.classList?.contains("lang-btn")) return;
+
+      const href = (el.getAttribute?.("href") || "").trim();
+      const action = (el.getAttribute?.("data-ga-action") || "").trim();
+      const location = resolveElementLocation(el);
+
+      // Dedupe: one logical click -> one GA event
+      if (el.dataset.gaClickLock === "1") return;
+      el.dataset.gaClickLock = "1";
+      setTimeout(() => {
+        delete el.dataset.gaClickLock;
+      }, 400);
+
+      if (action === "get_directions" || (href && isDirectionsHref(href))) {
+        trackGaEvent("get_directions", {
+          map_provider: "google_maps",
+          location_name: "sto_kaskad_pavlograd",
+          element_location: el.getAttribute("data-ga-location") || location || "map_section"
+        });
+        return;
+      }
+
+      if (
+        action === "click_to_call" ||
+        (href && href.toLowerCase().startsWith("tel:"))
+      ) {
+        trackGaEvent("click_to_call", {
+          element_location: el.getAttribute("data-ga-location") || location,
+          phone_slot:
+            el.getAttribute("data-ga-phone-slot") || resolvePhoneSlot(href)
+        });
+        return;
+      }
+
+      const messenger =
+        el.getAttribute("data-ga-platform") || detectMessengerPlatform(href);
+      if (action === "messenger_click" || messenger) {
+        const platform = messenger || "other";
+        if (platform === "telegram" || platform === "viber" || platform === "whatsapp") {
+          trackGaEvent("messenger_click", {
+            platform,
+            element_location: el.getAttribute("data-ga-location") || location
+          });
+        }
+        return;
+      }
+
+      const social =
+        action === "social_click"
+          ? el.getAttribute("data-ga-platform") || detectSocialPlatform(href) || "other"
+          : detectSocialPlatform(href);
+      if (action === "social_click" || social) {
+        // Do not treat messengers as social
+        if (detectMessengerPlatform(href)) return;
+        trackGaEvent("social_click", {
+          platform: social || "other",
+          element_location: el.getAttribute("data-ga-location") || location
+        });
+      }
+    },
+    false
+  );
+}
+
+initKaskadGaTracking();
+
 //кнопка Піднятись в гору (delegation — кнопка приходит из include)
 document.addEventListener("click", function (e) {
   const backToTop = e.target.closest("#back-to-top");
@@ -490,6 +740,25 @@ function initCallbackUI() {
   async function handleFormSubmit(form, source, options = {}) {
     const { useAlert = false, onSuccess = null } = options;
 
+    if (!form || form.dataset.gaSubmitting === "1") {
+      return;
+    }
+
+    form.dataset.gaSubmitting = "1";
+    const submitButtons = form.querySelectorAll(
+      'button[type="submit"], input[type="submit"], .callback-submit-btn, .submit-btn'
+    );
+    submitButtons.forEach((btn) => {
+      btn.disabled = true;
+    });
+
+    const releaseSubmitLock = () => {
+      form.dataset.gaSubmitting = "0";
+      submitButtons.forEach((btn) => {
+        btn.disabled = false;
+      });
+    };
+
     const formData = collectFormData(form, source);
 
     const phoneInput =
@@ -516,6 +785,7 @@ function initCallbackUI() {
       } else {
         showResponse(form, PHONE_ERROR, "error");
       }
+      releaseSubmitLock();
       return;
     }
     if (phoneInput) phoneInput.setCustomValidity("");
@@ -530,6 +800,7 @@ function initCallbackUI() {
       } else {
         showResponse(form, getVinError(), "error");
       }
+      releaseSubmitLock();
       return;
     }
     if (vinInput) vinInput.setCustomValidity("");
@@ -538,25 +809,6 @@ function initCallbackUI() {
 
     try {
       await sendToTelegram(telegramMessage);
-      if (formData.photoFile) {
-        await sendPhotoToTelegram(formData.photoFile, telegramMessage);
-      }
-
-      if (useAlert) {
-        alert("✅ Дякуємо! Ми вам зателефонуємо найближчим часом.");
-      } else {
-        showResponse(
-          form,
-          "Дякуємо! Ми вам зателефонуємо найближчим часом.",
-          "success"
-        );
-      }
-
-      form.reset();
-
-      if (typeof onSuccess === "function") {
-        onSuccess();
-      }
     } catch (error) {
       console.error("Помилка відправки форми:", error);
 
@@ -569,7 +821,45 @@ function initCallbackUI() {
           "error"
         );
       }
+      releaseSubmitLock();
+      return;
     }
+
+    // GA4: only after confirmed Telegram text success. No PII in params.
+    const formLocation =
+      form.getAttribute("data-ga-form-location") ||
+      (form.id === "modalForm" ? "modal_callback" : "service_page_callback");
+
+    trackGaEvent("generate_lead", {
+      form_name: "callback_form",
+      form_location: formLocation
+    });
+
+    if (formData.photoFile) {
+      try {
+        await sendPhotoToTelegram(formData.photoFile, telegramMessage);
+      } catch (photoError) {
+        console.error("Помилка відправки фото:", photoError);
+      }
+    }
+
+    if (useAlert) {
+      alert("✅ Дякуємо! Ми вам зателефонуємо найближчим часом.");
+    } else {
+      showResponse(
+        form,
+        "Дякуємо! Ми вам зателефонуємо найближчим часом.",
+        "success"
+      );
+    }
+
+    form.reset();
+
+    if (typeof onSuccess === "function") {
+      onSuccess();
+    }
+
+    releaseSubmitLock();
   }
 
   // =========================

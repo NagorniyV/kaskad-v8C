@@ -5,7 +5,7 @@
           <p data-translate="modal-title">
             Оставьте ваши дані, и ми перезвоним с готовым решением.
           </p>
-          <form class="modal-callbackForm" id="modalForm" data-lead-type="parts">
+          <form class="modal-callbackForm" id="modalForm" data-lead-type="parts" data-ga-form-location="modal_callback">
             <div class="form-group">
               <label for="modalName" data-translate="name">Ім’я</label>
               <input type="text" id="modalName" name="name" />
@@ -87,6 +87,9 @@
           target="_blank"
           class="social-btn telegram"
           rel="noopener noreferrer"
+          data-ga-action="messenger_click"
+          data-ga-platform="telegram"
+          data-ga-location="floating_button"
           ><svg
             xmlns="http://www.w3.org/2000/svg"
             x="0px"
@@ -121,7 +124,12 @@
           </svg>
           <i class="fab fa-telegram social-icon"></i>
         </a>
-        <a href="viber://chat?number=+380668375666" class="social-btn viber"
+        <a
+          href="viber://chat?number=+380668375666"
+          class="social-btn viber"
+          data-ga-action="messenger_click"
+          data-ga-platform="viber"
+          data-ga-location="floating_button"
           ><svg
             xmlns="http://www.w3.org/2000/svg"
             x="0px"
@@ -156,7 +164,12 @@
           </svg>
           <i class="fab fa-viber social-icon"></i>
         </a>
-        <a href="tel:+380668375666" class="social-btn phone"
+        <a
+          href="tel:+380668375666"
+          class="social-btn phone"
+          data-ga-action="click_to_call"
+          data-ga-location="floating_button"
+          data-ga-phone-slot="primary"
           ><svg
             width="40"
             height="40"

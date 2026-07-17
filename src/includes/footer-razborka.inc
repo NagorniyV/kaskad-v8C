@@ -57,17 +57,29 @@
           >
         </div>
         <div class="bot-footer">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2642.1671695603704!2d35.83380167638042!3d48.53002797128957!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40deb744fd3bfc69%3A0x36392c7691b6bb0d!2z0KHQotCeINCa0LDRgdC60LDQtA!5e0!3m2!1sru!2sua!4v1749836072193!5m2!1sru!2sua"
-            width="400"
-            height="300"
-            style="border-radius: 10px"
-            class="iframe"
-            title="Карта расположения автосервиса Каскад на Google Maps"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-          ></iframe>
+          <div class="map-embed-wrap">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2642.1671695603704!2d35.83380167638042!3d48.53002797128957!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40deb744fd3bfc69%3A0x36392c7691b6bb0d!2z0KHQotCeINCa0LDRgdC60LDQtA!5e0!3m2!1sru!2sua!4v1749836072193!5m2!1sru!2sua"
+              width="400"
+              height="300"
+              style="border-radius: 10px"
+              class="iframe"
+              title="Карта расположения автосервиса Каскад на Google Maps"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+            <a
+              class="map-directions-btn"
+              href="https://www.google.com/maps/dir/?api=1&destination=%D0%B2%D1%83%D0%BB%D0%B8%D1%86%D1%8F+%D0%A3%D1%88%D0%B8%D0%BD%D1%81%D1%8C%D0%BA%D0%BE%D0%B3%D0%BE+2%D0%90+%D0%9F%D0%B0%D0%B2%D0%BB%D0%BE%D0%B3%D1%80%D0%B0%D0%B4"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-ga-action="get_directions"
+              data-ga-location="map_section"
+              data-translate="map-directions-btn"
+              >Построить маршрут</a
+            >
+          </div>
           <div>
             <div class="work-footer-div">
               <p data-translate="work-footer-title">Работаем без выходных:</p>
@@ -77,14 +89,24 @@
             <div class="number-footer-div">
               <p data-translate="number-footer-title">Связь с нами:</p>
               <div>
-                <a href="tel:+380681234551" class="number-link"
+                <a
+                  href="tel:+380681234551"
+                  class="number-link"
+                  data-ga-action="click_to_call"
+                  data-ga-location="footer"
+                  data-ga-phone-slot="other"
                   >+38 (068) 123 45 51</a
                 >
                 <span data-translate="number-footer-razborka-name">Вячеслав</span>
               </div>
               <p data-translate="number-footer-dir-label">Директор</p>
               <div>
-                <a href="tel:+380502233959" class="number-link"
+                <a
+                  href="tel:+380502233959"
+                  class="number-link"
+                  data-ga-action="click_to_call"
+                  data-ga-location="footer"
+                  data-ga-phone-slot="other"
                   >+38 (050) 223−39−59</a
                 >
                 <span data-translate="number-footer-dir-name">Павел</span>

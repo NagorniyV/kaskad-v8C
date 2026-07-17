@@ -68,7 +68,7 @@
                   >БЕСПЛАТНО!</span
                 >
               </p>
-              <form id="callbackForm">
+              <form id="callbackForm" data-ga-form-location="service_page_callback">
                 <input
                   type="text"
                   id="nameInput"
